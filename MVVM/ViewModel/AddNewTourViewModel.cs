@@ -159,9 +159,6 @@ namespace TourPlanner_Project.MVVM.ViewModel
                         OnTourAddedSuccessfully();
                         DataWorker.Tours.Add(newTour);
                     }
-
-                    
-                    
                 }));
             }
         }

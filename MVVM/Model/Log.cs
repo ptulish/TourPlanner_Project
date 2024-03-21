@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Converters;
+using System.Collections.ObjectModel;
 
 namespace TourPlanner_Project.MVVM.Model
 {
@@ -24,7 +25,7 @@ namespace TourPlanner_Project.MVVM.Model
 
         public static Log CreateLog(int tourId, DateTimeOffset date, string comment, int difficulty, double totalDistance, int totalTime, int rating)
         {
-            return new Log
+            Log newLog = new Log
             {
                 TourId = tourId,
                 TourDate = date, 
@@ -34,6 +35,36 @@ namespace TourPlanner_Project.MVVM.Model
                 TotalTime = totalTime,
                 Rating = rating
             };
+            using (var context = new ApplicationContext())
+            {
+                context.Logs.Add(newLog);
+                context.SaveChanges();
+            }
+            return newLog;
+        }
+        public static List<Log> GetLogs(int tourId)
+        {
+            List<Log> Logs = new List<Log>();
+            using (ApplicationContext context = new ApplicationContext())
+            {
+                bool exists = context.Logs.Any(log => log.TourId == tourId);
+
+                var logs = context.Logs.Where(log => log.TourId == tourId).ToList();
+
+
+                if (logs.Count > 0)
+                {
+                    foreach (var log in logs)
+                    {
+                        Logs.Add(log);
+                    }
+                }
+                else
+                {
+                    Logs = new List<Log>();
+                }
+            }
+            return Logs;
         }
     }
 }

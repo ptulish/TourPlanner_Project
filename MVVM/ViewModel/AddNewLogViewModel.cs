@@ -17,7 +17,6 @@ namespace TourPlanner_Project.MVVM.ViewModel
             set 
             { 
                 _selectedTour = new Tour(value);
-                
                 OnPropertyChanged(nameof(SelectedTour));
             }
         }
@@ -32,8 +31,8 @@ namespace TourPlanner_Project.MVVM.ViewModel
             }
         }
 
-        private DateTimeOffset _newLogDate;
-        public DateTimeOffset NewLogDate
+        private DateTime _newLogDate;
+        public DateTime NewLogDate
         {
             get { return _newLogDate; }
             set
@@ -99,7 +98,8 @@ namespace TourPlanner_Project.MVVM.ViewModel
 
         public AddNewLogViewModel(Tour selectedTour)
         {
-            SelectedTour = selectedTour;
+            _selectedTour = selectedTour;
+            _newLogDate = DateTime.Today;
         }
 
         private RelayCommand _addNewLog;
@@ -164,15 +164,12 @@ namespace TourPlanner_Project.MVVM.ViewModel
 
                     if (good == true)
                     {
-                        Log newLog = Log.CreateLog(_selectedTour.Id, NewLogDate, NewLogComment, Convert.ToInt32(NewLogDifficulty.Content), Convert.ToInt32(NewLogDistance), Convert.ToInt32(NewLogTime), Convert.ToInt32(NewLogRating.Content));
-                        using (var context = new ApplicationContext())
-                        {
-                            context.Logs.Add(newLog);
-                            context.SaveChanges();
-                        }
-                        _selectedTour.Logs.Add(newLog);
-                        OnTourAddedSuccessfully();
+                        Log newLog = Log.CreateLog(_selectedTour.Id, NewLogDate.ToUniversalTime(), NewLogComment, Convert.ToInt32(NewLogDifficulty.Content), Convert.ToInt32(NewLogDistance), Convert.ToInt32(NewLogTime), Convert.ToInt32(NewLogRating.Content));
+
                         //add the log to the tour
+                        OnLogAddedSuccessfully();
+                        SelectedTour.Logs.Add(newLog);
+                        
                     }
 
 
@@ -197,7 +194,7 @@ namespace TourPlanner_Project.MVVM.ViewModel
         public event EventHandler LogAddedSuccessfully;
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnTourAddedSuccessfully()
+        protected virtual void OnLogAddedSuccessfully()
         {
             LogAddedSuccessfully?.Invoke(this, EventArgs.Empty);
         }

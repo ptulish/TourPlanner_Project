@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Input;
-using TourPlanner_Project.MVVM.Model;
+﻿using TourPlanner_Project.MVVM.Model;
 using System.ComponentModel;
 using TourPlanner_Project.MVVM.Views;
-using System.Diagnostics;
 using System.Windows;
 
 namespace TourPlanner_Project.MVVM.ViewModel
@@ -16,6 +8,28 @@ namespace TourPlanner_Project.MVVM.ViewModel
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         #region VARIABLES
+        private List<Log> _logs = new List<Log>();
+        public List<Log> Logs 
+        { 
+            get 
+            { 
+                if(SelectedTour == null)
+                {
+                    MessageBoxResult result = MessageBox.Show("Уверены ли вы?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question); 
+                    return null;
+                }
+                else
+                {
+                    _logs = Log.GetLogs(SelectedTour.Id);
+                    return _logs;
+                }
+            }
+            set 
+            {
+                _logs = SelectedTour.Logs;
+                OnPropertyChanged("SelectedTour.Logs");
+            }
+        }
         private List<Tour> _tours = new List<Tour>();
         public List<Tour> Tours
         {
@@ -32,10 +46,11 @@ namespace TourPlanner_Project.MVVM.ViewModel
             get => _selectedTour;
             set
             {
-                if(value != _selectedTour)
+                if(value != _selectedTour && value != null)
                 {
                     DataWorker.SelectedTour = value;
                     _selectedTour = value;
+                    SelectedTour.Logs = Log.GetLogs(SelectedTour.Id);
                     OnPropertyChanged(nameof(SelectedTour));
                 }
             }
@@ -83,6 +98,7 @@ namespace TourPlanner_Project.MVVM.ViewModel
                 {
                     AddNewLogWindow newLogWindow = new AddNewLogWindow(_selectedTour);
                     newLogWindow.ShowDialog();
+                    Logs = Log.GetLogs(SelectedTour.Id);
                 });
             }
         }

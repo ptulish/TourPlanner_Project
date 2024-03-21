@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Abstractions;
+using System.Collections.ObjectModel;
 
 namespace TourPlanner_Project.MVVM.Model
 {
@@ -15,25 +17,7 @@ namespace TourPlanner_Project.MVVM.Model
         public Tour(Tour value)
         {
             Tour tour = value;
-            using (ApplicationContext context = new ApplicationContext())
-            {
-                bool exists = context.Logs.Any(log => log.TourId == tour.Id);
-
-                var logs = context.Logs.Where(log => log.TourId == tour.Id).ToList();
-
-                
-                if (logs.Count > 0)
-                {
-                    foreach (var log in logs)
-                    {
-                        tour.Logs.Add(log);
-                    }
-                } 
-                else
-                {
-                    tour.Logs = new List<Log>();
-                }
-            }
+            tour.Logs = Log.GetLogs(value.Id);
         }
         public Tour()
         {
@@ -52,6 +36,7 @@ namespace TourPlanner_Project.MVVM.Model
         public long EstimatedTime { get; set; }
         public string Information {  get; set; }
         public List<Log> Logs { get; set; }    
+        public double Rating { get; set; }
 
         internal static Tour CreateTour(string newTourName, string newTourFrom, string newTourTo, string newTourTransportType, string newTourInformation, string newTourDescription)
         {
@@ -65,7 +50,8 @@ namespace TourPlanner_Project.MVVM.Model
                 Distance = 100,
                 EstimatedTime = 3600 / 60,
                 Information = newTourInformation,
-                Logs = new List<Log>()
+                Logs = new List<Log>(),
+                Rating = 8.7
             };
 
             return tour;
