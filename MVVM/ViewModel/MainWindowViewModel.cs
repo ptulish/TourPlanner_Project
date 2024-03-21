@@ -81,8 +81,8 @@ namespace TourPlanner_Project.MVVM.ViewModel
             {
                 return openAddNewLogWindow ?? new RelayCommand(obj =>
                 {
-                    AddNewLogWindow newLogWindow = new AddNewLogWindow();
-                    newLogWindow.Show();
+                    AddNewLogWindow newLogWindow = new AddNewLogWindow(_selectedTour);
+                    newLogWindow.ShowDialog();
                 });
             }
         }

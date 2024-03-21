@@ -86,19 +86,91 @@ namespace TourPlanner_Project.MVVM.ViewModel
                 return addNewTour ?? (addNewTour = new RelayCommand(obj =>
                 {
                     Window wnd = obj as Window;
-                    SetRedBlockControll(wnd, "new_tour_name");
-                    Tour newTour = Tour.CreateTour(NewTourName, NewTourFrom, NewTourTo,NewTourTransportType,NewTourInformation,NewTourDescription);
-                    using (var context = new ApplicationContext())
+                    bool good = true;
+                    if (NewTourName == null || NewTourName == string.Empty)
                     {
-                        context.Tours.Add(newTour);
-                        context.SaveChanges();
+                        SetRedBlockControll(wnd, "new_tour_name");
+                        good = false;
+                    } 
+                    else
+                    {
+                        SetNormalBlockControll(wnd, "new_tour_name");
                     }
-                    OnTourAddedSuccessfully();
-                    DataWorker.Tours.Add(newTour);
+
+                    if (NewTourFrom == null || NewTourFrom == string.Empty)
+                    {
+                        SetRedBlockControll(wnd, "new_tour_from");
+                        good = false;
+                    }
+                    else
+                    {
+                        SetNormalBlockControll(wnd, "new_tour_from");
+                    }
+
+                    if (NewTourTo == null || NewTourTo == string.Empty)
+                    {
+                        SetRedBlockControll(wnd, "new_tour_to");
+                        good = false;
+                    }
+                    else
+                    {
+                        SetNormalBlockControll(wnd, "new_tour_to");
+                    }
+
+                    if (NewTourTransportType == null || NewTourTransportType == string.Empty)
+                    {
+                        SetRedBlockControll(wnd, "new_tour_transport_type");
+                        good = false;
+                    }
+                    else
+                    {
+                        SetNormalBlockControll(wnd, "new_tour_transport_type");
+                    }
+
+                    if (NewTourInformation == null || NewTourInformation == string.Empty)
+                    {
+                        SetRedBlockControll(wnd, "new_tour_information");
+                        good = false;
+                    }
+                    else
+                    {
+                        SetNormalBlockControll(wnd, "new_tour_information");
+                    }
+
+                    if (NewTourDescription == null || NewTourDescription == string.Empty)
+                    {
+                        SetRedBlockControll(wnd, "new_tour_description");
+                        good = false;
+                    }
+                    else
+                    {
+                        SetNormalBlockControll(wnd, "new_tour_description");
+                    }
+
+
+                    if (good == true)
+                    {
+                        Tour newTour = Tour.CreateTour(NewTourName, NewTourFrom, NewTourTo, NewTourTransportType, NewTourInformation, NewTourDescription);
+                        using (var context = new ApplicationContext())
+                        {
+                            context.Tours.Add(newTour);
+                            context.SaveChanges();
+                        }
+                        OnTourAddedSuccessfully();
+                        DataWorker.Tours.Add(newTour);
+                    }
+
+                    
+                    
                 }));
             }
         }
-        
+
+        private void SetNormalBlockControll(Window? wnd, string blockName)
+        {
+            Control block = wnd.FindName(blockName) as Control;
+            block.BorderBrush = Brushes.Black;
+        }
 
         private void SetRedBlockControll(Window wnd, string blockName)
         {

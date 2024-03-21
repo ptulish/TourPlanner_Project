@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TourPlanner_Project.MVVM.Model;
+using TourPlanner_Project.MVVM.ViewModel;
 
 namespace TourPlanner_Project.MVVM.Views
 {
@@ -19,9 +21,20 @@ namespace TourPlanner_Project.MVVM.Views
     /// </summary>
     public partial class AddNewLogWindow : Window
     {
-        public AddNewLogWindow()
+        private AddNewLogViewModel viewModel;
+
+        public AddNewLogWindow(Tour selectedTour)
         {
             InitializeComponent();
+            viewModel = new AddNewLogViewModel(selectedTour);
+            this.DataContext = viewModel;
+            viewModel.LogAddedSuccessfully += (sender, e) =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    this.Close();
+                });
+            };
         }
     }
 }
